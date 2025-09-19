@@ -3,9 +3,6 @@ import connectDB from '@/lib/dbConnect';
 import User from '@/models/User';
 import { verifyToken } from '@/lib/jwt';
 
-// Simple admin check - you can enhance this with proper role-based authentication
-const ADMIN_EMAIL = 'admin@notes.com'; // Change this to your admin email
-
 async function isAdmin(request) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
   
@@ -16,7 +13,9 @@ async function isAdmin(request) {
   const decoded = verifyToken(token);
   const user = await User.findById(decoded.userId);
   
-  // Simple admin check - you can make this more sophisticated
+  // Get admin email from environment (with fallback)
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@notes.com';
+  
   return user && user.email === ADMIN_EMAIL;
 }
 
@@ -32,6 +31,9 @@ export async function GET(request) {
       );
     }
 
+    // Get admin email from environment (with fallback)
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@notes.com';
+    
     const users = await User.find({ email: { $ne: ADMIN_EMAIL } }) // Exclude admin user
       .select('-password') // Exclude password from response
       .sort({ createdAt: -1 });

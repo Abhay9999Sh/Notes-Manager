@@ -21,15 +21,28 @@ export default function AdminDashboard() {
       return;
     }
     
-    // Simple admin check - you can enhance this
-    if (userData.email !== 'admin@notes.com') {
-      setError('Access denied. Admin only.');
-      return;
-    }
-    
     setUser(userData);
-    fetchData();
+    checkAdminAndFetchData();
   }, [router]);
+
+  const checkAdminAndFetchData = async () => {
+    try {
+      // Check if user is admin
+      const adminResponse = await api.get('/admin/check');
+      if (!adminResponse.data.isAdmin) {
+        setError('Access denied. Admin only.');
+        setLoading(false);
+        return;
+      }
+      
+      // If admin, fetch data
+      await fetchData();
+    } catch (error) {
+      setError('Access denied. Admin only.');
+      setLoading(false);
+      console.error('Admin check error:', error);
+    }
+  };
 
   const fetchData = async () => {
     try {

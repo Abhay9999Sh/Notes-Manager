@@ -15,12 +15,29 @@ export default function DashboardPage() {
     description: '',
   });
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const userData = auth.getUser();
     setUser(userData);
+    checkAdminStatus();
     fetchNotes();
   }, []);
+
+  const checkAdminStatus = async () => {
+    try {
+      const response = await fetch('/api/admin/check', {
+        headers: {
+          'Authorization': `Bearer ${auth.getToken()}`
+        }
+      });
+      const data = await response.json();
+      setIsAdmin(data.isAdmin || false);
+    } catch (error) {
+      console.error('Admin check error:', error);
+      setIsAdmin(false);
+    }
+  };
 
   const fetchNotes = async () => {
     try {
@@ -111,7 +128,7 @@ export default function DashboardPage() {
               <span className="text-base text-gray-700 font-medium">
                 Welcome, <span className="text-blue-600">{user?.name}</span>
               </span>
-              {user?.email === 'admin@notes.com' && (
+              {isAdmin && (
                 <a
                   href="/admin"
                   className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 text-base font-medium transition-all duration-200 shadow-md hover:shadow-lg"
@@ -132,7 +149,7 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Add Note Button - Only show for non-admin users */}
-        {user?.email !== 'admin@notes.com' && (
+        {!isAdmin && (
           <div className="mb-6">
             <button
               onClick={() => setShowForm(true)}
@@ -154,7 +171,7 @@ export default function DashboardPage() {
         )}
 
         {/* Add/Edit Note Form - Only show for non-admin users */}
-        {showForm && user?.email !== 'admin@notes.com' && (
+        {showForm && !isAdmin && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white p-8 rounded-xl max-w-lg w-full shadow-2xl border border-gray-100">
               <div className="flex justify-between items-center mb-6">
@@ -221,7 +238,7 @@ export default function DashboardPage() {
         )}
 
         {/* Content for Admin vs Regular Users */}
-        {user?.email === 'admin@notes.com' ? (
+        {isAdmin ? (
           <div className="text-center py-16">
             <div className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
               <div className="text-6xl mb-4">🛡️</div>
