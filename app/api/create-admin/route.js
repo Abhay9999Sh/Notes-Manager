@@ -9,9 +9,9 @@ export async function POST() {
   try {
     await connectDB();
     
-    const adminEmail = 'admin@notes.com';
-    const adminPassword = 'admin123'; // Change this to a secure password
-    const adminName = 'Admin User';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@notes.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminName = process.env.ADMIN_NAME || 'Admin User';
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: adminEmail });
@@ -37,8 +37,10 @@ export async function POST() {
     return NextResponse.json({
       message: 'Admin user created successfully!',
       email: adminEmail,
-      password: adminPassword,
-      note: 'Please change the password after first login.'
+      password: process.env.NODE_ENV === 'production' ? '***hidden***' : adminPassword,
+      note: process.env.NODE_ENV === 'production' 
+        ? 'Admin created with environment credentials. Keep them secure!' 
+        : 'Please change the password after first login.'
     });
   } catch (error) {
     console.error('Error creating admin user:', error);

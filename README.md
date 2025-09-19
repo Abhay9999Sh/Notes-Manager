@@ -23,7 +23,7 @@
 - ✅ **Edit Notes** - Update existing notes with inline editing
 - ✅ **Delete Notes** - Remove notes with confirmation
 - ✅ **Responsive Design** - Works perfectly on desktop and mobile
-- ✅ **Password Security** - Show/hide password toggle
+
 
 ### 🛡️ **Admin Features**
 - ✅ **Admin Dashboard** - Dedicated admin panel at `/admin`
@@ -38,7 +38,6 @@
 - 🔑 **Password Hashing** - bcryptjs encryption for passwords
 - 🛡️ **Route Protection** - Middleware-based route security
 - 👥 **User Isolation** - Users can only access their own notes
-- 🚫 **Admin Filtering** - Admin user hidden from user lists
 
 ---
 
@@ -89,6 +88,11 @@ MONGODB_URI=your_mongodb_connection_string_here
 
 # JWT Secret (generate a random 32+ character string)
 JWT_SECRET=your_super_secret_jwt_key_here_minimum_32_characters
+
+# Admin Credentials (for production deployment)
+ADMIN_EMAIL=your_admin_email@example.com
+ADMIN_PASSWORD=your_secure_admin_password
+ADMIN_NAME=Your Admin Name
 ```
 
 📚 **How to get these values:**
@@ -132,10 +136,25 @@ npm run dev
 
 ### 4️⃣ **Create Admin User**
 
-Visit `http://localhost:3000/create-admin` to create the admin user:
-- **Email**: `admin@notes.com`
-- **Password**: Your chosen admin password
-- **Name**: Admin
+<details>
+<summary>🔒 <strong>Admin Setup (IMPORTANT for Security)</strong></summary>
+
+**For Local Development:**
+- Visit `http://localhost:3000/create-admin`
+- Uses default credentials: `admin@notes.com` / `admin123`
+
+**For Production Deployment:**
+- ⚠️ **NEVER use default credentials in production!**
+- Set custom admin credentials in environment variables:
+  ```env
+  ADMIN_EMAIL=your_secure_admin@yourdomain.com
+  ADMIN_PASSWORD=your_very_secure_password_here
+  ADMIN_NAME=Your Admin Name
+  ```
+- Then visit `/create-admin` to create admin with your secure credentials
+- **Keep these credentials private and secure!**
+
+</details>
 
 ---
 
@@ -441,7 +460,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Made with ❤️ by [Your Name]**
+**Made with ❤️ by Abhay Sharma**
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
 
